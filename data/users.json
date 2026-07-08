@@ -1,0 +1,66 @@
+[
+  {
+    "username": "admin",
+    "password": "admin123",
+    "name": "ผู้ดูแล",
+    "prefix": "A",
+    "role": "admin",
+    "active": true
+  },
+  {
+    "username": "person1",
+    "password": "1111",
+    "name": "คนที่ 1",
+    "prefix": "A",
+    "role": "operator",
+    "active": true
+  },
+  {
+    "username": "person2",
+    "password": "2222",
+    "name": "คนที่ 2",
+    "prefix": "B",
+    "role": "operator",
+    "active": true
+  },
+  {
+    "username": "person3",
+    "password": "3333",
+    "name": "คนที่ 3",
+    "prefix": "C",
+    "role": "operator",
+    "active": true
+  },
+  {
+    "username": "person4",
+    "password": "4444",
+    "name": "คนที่ 4",
+    "prefix": "D",
+    "role": "operator",
+    "active": true
+  },
+  {
+    "username": "account",
+    "password": "account123",
+    "name": "บัญชี",
+    "prefix": "A",
+    "role": "transfer",
+    "active": true
+  },
+  {
+    "username": "sales",
+    "password": "sales123",
+    "name": "เซลล์",
+    "prefix": "A",
+    "role": "sales",
+    "active": true
+  },
+  {
+    "username": "manager",
+    "password": "manager123",
+    "name": "หัวหน้าแผนก",
+    "prefix": "A",
+    "role": "manager",
+    "active": true
+  }
+]
