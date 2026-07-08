@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ระบบใบงาน</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <section class="login-screen" id="loginScreen">
+      <form class="login-panel" id="loginForm" autocomplete="off">
+        <p class="eyebrow">ONLINE WORK ORDER</p>
+        <h1>เข้าสู่ระบบใบงาน</h1>
+        <label>
+          <span>ชื่อผู้ใช้</span>
+          <input id="loginUsername" required placeholder="เช่น person1" />
+        </label>
+        <label>
+          <span>รหัสผ่าน</span>
+          <input id="loginPassword" required type="password" placeholder="รหัสผ่าน" />
+        </label>
+        <button class="primary-button" type="submit">เข้าสู่ระบบ</button>
+        <p class="message" id="loginMessage" role="status"></p>
+        <div class="login-hint">
+          <strong>รหัสเริ่มต้น</strong>
+          <span>person1/1111, person2/2222, person3/3333, person4/4444</span>
+        </div>
+      </form>
+    </section>
+
+    <div class="app-shell hidden" id="appShell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">WORK ORDER</p>
+          <h1>ระบบใบงาน</h1>
+        </div>
+        <div class="header-actions">
+          <div class="user-pill" id="userInfo"></div>
+          <button class="secondary-button hidden" id="usersToggleBtn" type="button">จัดการผู้ใช้</button>
+          <button class="icon-button" id="refreshBtn" title="โหลดข้อมูลใหม่" aria-label="โหลดข้อมูลใหม่">
+            <span aria-hidden="true">↻</span>
+          </button>
+          <button class="primary-button" id="newBtn">สร้างใบงาน</button>
+          <button class="secondary-button" id="logoutBtn" type="button">ออกจากระบบ</button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel form-panel" aria-labelledby="formTitle">
+          <div class="panel-title">
+            <div>
+              <p class="eyebrow">ENTRY</p>
+              <h2 id="formTitle">เพิ่มใบงานใหม่</h2>
+            </div>
+            <button class="ghost-button hidden" id="cancelEditBtn">ยกเลิกแก้ไข</button>
+          </div>
+
+          <form id="jobForm" autocomplete="off">
+            <input type="hidden" id="jobId" />
+
+            <div class="field-grid">
+              <label>
+                <span>คนลงข้อมูล</span>
+                <select id="creatorPrefix">
+                  <option value="A">คนที่ 1 - A</option>
+                  <option value="B">คนที่ 2 - B</option>
+                  <option value="C">คนที่ 3 - C</option>
+                  <option value="D">คนที่ 4 - D</option>
+                </select>
+              </label>
+              <label>
+                <span>เลขที่บิล</span>
+                <div class="inline-input">
+                  <input id="billNo" required placeholder="เช่น B07/001" />
+                  <button class="secondary-button" id="generateBillBtn" type="button">ออกเลข</button>
+                </div>
+              </label>
+              <label>
+                <span>ชื่อร้าน</span>
+                <input id="shopName" required placeholder="ชื่อร้านค้า" />
+              </label>
+              <label>
+                <span>ยอด</span>
+                <input id="netSales" required type="number" min="0" step="0.01" placeholder="0.00" />
+              </label>
+              <label id="depositField" class="hidden">
+                <span>ยอดมัดจำ</span>
+                <input id="depositAmount" type="number" min="0" step="0.01" placeholder="0.00" />
+              </label>
+            </div>
+
+            <div class="check-grid" aria-label="สถานะใบงาน">
+              <label class="check-card">
+                <input id="isTransferred" type="checkbox" />
+                <span>โอนแล้ว</span>
+              </label>
+              <label class="check-card">
+                <input id="canProduceFirst" type="checkbox" />
+                <span>ผลิตได้ก่อน</span>
+              </label>
+              <label class="check-card">
+                <input id="isDeposit" type="checkbox" />
+                <span>มัดจำ</span>
+              </label>
+              <label class="check-card danger-check">
+                <input id="isCancelled" type="checkbox" />
+                <span>ยกเลิก</span>
+              </label>
+              <label class="check-card">
+                <input id="productionOpened" type="checkbox" />
+                <span>เปิดใบผลิตแล้ว</span>
+              </label>
+              <label class="check-card">
+                <input id="quotationReceived" type="checkbox" />
+                <span>รับใบเสนอราคาแล้ว</span>
+              </label>
+            </div>
+
+            <label class="note-field">
+              <span>หมายเหตุ</span>
+              <textarea id="note" rows="3" placeholder="รายละเอียดเพิ่มเติมถ้ามี"></textarea>
+            </label>
+
+            <div class="form-actions">
+              <button class="primary-button" type="submit" id="saveBtn">บันทึกใบงาน</button>
+              <button class="secondary-button" type="button" id="clearBtn">ล้างฟอร์ม</button>
+            </div>
+            <p class="message" id="formMessage" role="status"></p>
+          </form>
+        </section>
+
+        <section class="panel users-panel hidden" id="usersPanel" aria-labelledby="usersTitle">
+          <div class="panel-title">
+            <div>
+              <p class="eyebrow">ACCESS</p>
+              <h2 id="usersTitle">จัดการผู้ใช้และสิทธิ์</h2>
+            </div>
+          </div>
+
+          <form id="userForm" class="user-form" autocomplete="off">
+            <input type="hidden" id="editingUsername" />
+            <div class="user-field-grid">
+              <label>
+                <span>ชื่อผู้ใช้</span>
+                <input id="managedUsername" required placeholder="เช่น account2" />
+              </label>
+              <label>
+                <span>ชื่อแสดง</span>
+                <input id="managedName" required placeholder="ชื่อพนักงาน" />
+              </label>
+              <label>
+                <span>รหัสผ่าน</span>
+                <input id="managedPassword" type="password" placeholder="อย่างน้อย 4 ตัว" />
+              </label>
+              <label>
+                <span>ตัวอักษรเลขบิล</span>
+                <select id="managedPrefix">
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                </select>
+              </label>
+              <label>
+                <span>สิทธิ์</span>
+                <select id="managedRole">
+                  <option value="operator">ผู้ลงใบงาน</option>
+                  <option value="transfer">บัญชีลงยอดโอน</option>
+                  <option value="sales">เซลล์ดูงาน</option>
+                  <option value="manager">หัวหน้าแผนก</option>
+                  <option value="admin">ผู้ดูแลระบบ</option>
+                </select>
+              </label>
+              <label class="check-card active-user-check">
+                <input id="managedActive" type="checkbox" checked />
+                <span>เปิดใช้งาน</span>
+              </label>
+            </div>
+            <div class="form-actions">
+              <button class="primary-button" type="submit" id="saveUserBtn">เพิ่มผู้ใช้</button>
+              <button class="secondary-button" type="button" id="clearUserBtn">ล้างฟอร์มผู้ใช้</button>
+            </div>
+            <p class="message" id="userMessage" role="status"></p>
+          </form>
+
+          <div class="table-wrap users-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ชื่อผู้ใช้</th>
+                  <th>ชื่อ</th>
+                  <th>สิทธิ์</th>
+                  <th>เลขบิล</th>
+                  <th>สถานะ</th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="usersBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel list-panel" aria-labelledby="listTitle">
+          <div class="panel-title">
+            <div>
+              <p class="eyebrow">SUMMARY</p>
+              <h2>สรุปแจ้งเตือน</h2>
+            </div>
+          </div>
+          <div class="summary-grid" id="summaryGrid"></div>
+
+          <div class="panel-title list-title-row">
+            <div>
+              <p class="eyebrow">LIST</p>
+              <h2 id="listTitle">รายการใบงาน</h2>
+            </div>
+            <div class="count-pill"><span id="visibleCount">0</span>/<span id="totalCount">0</span></div>
+          </div>
+
+          <div class="toolbar search-toolbar">
+            <label class="search-box">
+              <span>ค้นหาเลขบิลหรือชื่อร้าน</span>
+              <input id="searchInput" placeholder="ค้นหาเลขที่บิลหรือชื่อร้าน" />
+            </label>
+            <label>
+              <span>สถานะ</span>
+              <select id="statusFilter" aria-label="กรองสถานะ">
+                <option value="all">ทุกสถานะ</option>
+                <option value="pendingTransfer">ยังไม่โอน</option>
+                <option value="canProduceFirst">ผลิตได้ก่อน</option>
+                <option value="isDeposit">มัดจำ</option>
+                <option value="isCancelled">ยกเลิก</option>
+                <option value="productionOpened">เปิดใบผลิตแล้ว</option>
+                <option value="pendingProduction">ยังไม่เปิดใบผลิต</option>
+                <option value="quotationReceived">รับใบเสนอราคาแล้ว</option>
+                <option value="pendingQuotation">ยังไม่ได้รับใบเสนอราคา</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>เลขที่บิล</th>
+                  <th>ชื่อร้าน</th>
+                  <th>ยอด</th>
+                  <th>โอน</th>
+                  <th>ผลิตได้</th>
+                  <th>มัดจำ</th>
+                  <th>ยกเลิก</th>
+                  <th>เปิดใบผลิตแล้ว</th>
+                  <th>รับใบเสนอราคาแล้ว</th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="jobsBody"></tbody>
+            </table>
+            <div class="empty-state hidden" id="emptyState">ยังไม่มีรายการใบงาน</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="rowTemplate">
+      <tr>
+        <td data-label="เลขที่บิล" class="bill-cell"></td>
+        <td data-label="ชื่อร้าน" class="shop-cell"></td>
+        <td data-label="ยอด" class="money-cell"></td>
+        <td data-label="โอน" class="transfer-cell"></td>
+        <td data-label="ผลิตได้" class="produce-cell"></td>
+        <td data-label="มัดจำ" class="deposit-cell"></td>
+        <td data-label="ยกเลิก" class="cancel-cell"></td>
+        <td data-label="เปิดใบผลิตแล้ว" class="production-cell"></td>
+        <td data-label="รับใบเสนอราคาแล้ว" class="quotation-cell"></td>
+        <td data-label="จัดการ" class="action-cell"></td>
+      </tr>
+    </template>
+
+    <template id="userRowTemplate">
+      <tr>
+        <td data-label="ชื่อผู้ใช้" class="managed-username-cell"></td>
+        <td data-label="ชื่อ" class="managed-name-cell"></td>
+        <td data-label="สิทธิ์" class="managed-role-cell"></td>
+        <td data-label="เลขบิล" class="managed-prefix-cell"></td>
+        <td data-label="สถานะ" class="managed-active-cell"></td>
+        <td data-label="จัดการ" class="managed-action-cell"></td>
+      </tr>
+    </template>
+
+    <section class="print-sheet" id="printSheet" aria-hidden="true"></section>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
