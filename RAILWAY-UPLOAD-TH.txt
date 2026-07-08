@@ -1,0 +1,40 @@
+วิธีอัปขึ้น Railway
+
+ก่อนเริ่ม
+1. สมัคร/ล็อกอิน https://railway.com/
+2. ไฟล์ระบบอยู่ในโฟลเดอร์นี้แล้ว
+
+วิธีง่ายสุด
+1. ดับเบิลคลิกไฟล์:
+   deploy-to-railway.bat
+2. ถ้ามีหน้า Railway เปิดขึ้นมา ให้ล็อกอินด้วยบัญชี Railway ของคุณ
+3. รอจน deploy เสร็จ
+4. ระบบจะพยายามสร้าง URL สาธารณะให้
+
+สิ่งที่ไฟล์ deploy ทำให้
+- อัปโหลดระบบขึ้น Railway
+- ตั้ง DATA_DIR=/data
+- สร้าง volume ถาวรที่ /data เพื่อเก็บข้อมูลใบงาน/ผู้ใช้
+- สร้าง public domain ของ Railway
+
+ถ้า deploy สำเร็จ แต่เปิดเว็บไม่ได้
+1. เข้า Railway dashboard
+2. เปิดโปรเจกต์ work-order-system
+3. ไปที่ service
+4. ดูแท็บ Deployments / Logs
+5. ดูแท็บ Settings / Networking / Domains
+
+บัญชีระบบหลังอัปขึ้น Railway
+- admin / admin123
+- person1 / 1111
+- person2 / 2222
+- person3 / 3333
+- person4 / 4444
+- account / account123
+- sales / sales123
+- manager / manager123
+
+หลังอัปเสร็จ
+- ให้เข้า admin แล้วเปลี่ยนรหัสผ่านทันที
+- เพิ่มผู้ใช้จริงจากปุ่มจัดการผู้ใช้
+- ทดสอบบันทึกใบงาน 1 รายการ
